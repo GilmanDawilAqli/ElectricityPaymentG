@@ -25,3 +25,15 @@ Route::get('/petugas', function () {
 Route::get('/history', function () {
     return view('history', ['title' => 'History']);
 });
+
+Route::get('/login', function () {
+    return view('login', ['title' => 'Login']);
+});
+
+Route::get('/pemakaian', function () {
+    return view('pemakaian', ['title' => 'Pemakaian']);
+});
+
+Route::get('/tarif', function () {
+    return view('tarif', ['title' => 'Tarif']);
+});

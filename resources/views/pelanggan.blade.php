@@ -1,2 +1,2 @@
 <x-layout></x-layout>
-<x-crud></x-crud>
+<x-data></x-data>

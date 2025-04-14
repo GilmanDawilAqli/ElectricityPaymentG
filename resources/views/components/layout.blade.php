@@ -6,14 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Electricity Payment</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
+
 </head>
-<body>
-    
+<body class="overflow-hidden">
+    <x-navbar></x-navbar>
 </body>
 </html>
-<div class="min-h-full">
-
-<x-navbar></x-navbar>
-
-</div>
   
