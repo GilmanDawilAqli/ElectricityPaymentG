@@ -11,7 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('tarif', function (Blueprint $table) {
+            $table->string('JenisPelanggan')->primary();
+            $table->decimal('BiayaBeban', 10, 2);
+            $table->decimal('TarifKWH', 10, 2);
+            $table->timestamps();
+        });
+        
     }
 
     /**
@@ -19,39 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
-    }
+        Schema::dropIfExists('tarif');
+}
 };
-
-// public function up(): void
-//     {
-//         Schema::create('tarifs', function (Blueprint $table) {
-//             $table->string('Jenis_Plg')->primary();
-//             $table->decimal('BiayaBeban', 10, 2);
-//             $table->decimal('TarifKWH', 10, 4);
-//             $table->timestamps();
-//         });
-//     }
-
-//     public function down(): void
-//     {
-//         Schema::dropIfExists('tarifs');
-//     }
-
-/** PEMBAYARAN */
-// public function up(): void
-// {
-//     Schema::create('pembayarans', function (Blueprint $table) {
-//         $table->id();
-//         $table->integer('Tahun');
-//         $table->tinyInteger('Bulan');
-//         $table->char('NoKontrol', 12);
-//         $table->decimal('TotalBayar', 12, 2);
-//         $table->date('TanggalBayar');
-//         $table->unsignedBigInteger('petugas_id');
-//         $table->timestamps();
-
-//         $table->foreign('NoKontrol')->references('NoKontrol')->on('pelanggans')->onDelete('cascade');
-//         $table->foreign('petugas_id')->references('id')->on('penggunas')->onDelete('cascade');
-//     });
-// }

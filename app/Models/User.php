@@ -9,8 +9,7 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    // protected $table = '...'; -> untuk tabel yang dituju
-    // ptotected $primaryKey = '...'; -> untuk primary key
+
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
@@ -49,3 +48,5 @@ class User extends Authenticatable
         ];
     }
 }
+    // protected $table = '...'; -> untuk tabel yang dituju
+    // ptotected $primaryKey = '...'; -> untuk primary key

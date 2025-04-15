@@ -12,11 +12,19 @@
           </div>
         </div>
       </div>
+      <div class="hidden md:block text-gray-100">
+        @if(Auth::user()->admin)
+        Admin
+        @else
+          Petugas
+        @endif
+      </div>
       <div class="hidden md:block">
         <div class="ml-4 flex items-center md:ml-6">
-          <div class="relative ml-3">
-              <a href="/" class="block px-4 py-2 text-sm text-gray-100" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</a>
-          </div>
+          <form class="relative ml-3" method="POST" action="{{ route('logout') }}">
+            @csrf
+              <button href="/" type="submit" class="block px-4 py-2 text-sm text-gray-100 hover:cursor-pointer hover:text-red-500" role="menuitem" tabindex="-1" id="user-menu-item-2">Sign out</button>
+          </form>
         </div>
       </div>
     </div>

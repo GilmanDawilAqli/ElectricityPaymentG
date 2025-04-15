@@ -11,7 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('pelanggan', function (Blueprint $table) {
+            $table->char('NoKontrol', 12)->primary();
+            $table->string('Nama', 50);
+            $table->string('Alamat', 150);
+            $table->string('Telepon', 15);
+            $table->string('JenisPelanggan');
+            $table->timestamps();
+
+            $table->foreign('JenisPelanggan')->references('JenisPelanggan')->on('tarif')->onDelete('cascade');
+        });
     }
 
     /**
@@ -19,17 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+         Schema::dropIfExists('pelanggan');
     }
 };
-// public function up(): void
-// {
-//     Schema::create('pelanggans', function (Blueprint $table) {
-//         $table->char('NoKontrol', 12)->primary();
-//         $table->string('Nama', 50);
-//         $table->string('Alamat', 150);
-//         $table->string('Telepon', 15);
-//         $table->string('Jenis_Plg');
-//         $table->timestamps();
-//     });
-// }

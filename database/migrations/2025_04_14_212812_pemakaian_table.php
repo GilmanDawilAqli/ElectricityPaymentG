@@ -11,29 +11,23 @@ return new class extends Migration
      */
     public function up(): void
     {
-        //
+        Schema::create('pemakaian', function (Blueprint $table) {
+            $table->year('Tahun');
+            $table->unsignedTinyInteger('Bulan');
+            $table->char('NoKontrol', 12);
+            $table->integer('MeterAwal');
+            $table->integer('MeterAkhir');
+            $table->decimal('BiayaBebanPemakai', 10, 2);
+            $table->decimal('BiayaPemakaian', 12, 2);
+            $table->timestamps();
+        
+            $table->primary(['Tahun', 'Bulan', 'NoKontrol']);
+            $table->foreign('NoKontrol')->references('NoKontrol')->on('pelanggan')->onDelete('cascade');
+        });
+        
     }
-
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('pemakaian');
     }
 };
-// public function up(): void
-// {
-//     Schema::create('pemakaians', function (Blueprint $table) {
-//        $table->integer('Tahun');
-//        $table->tinyInteger('Bulan');
-//        $table->char('NoKontrol', 12);
-//        $table->integer('MeterAwal');
-//        $table->integer('MeterAkhir');
-//        $table->decimal('BiayaBebanPemakai', 10, 2);
-//        $table->decimal('BiayaPemakaian', 12, 2);
-
-//        $table->primary(['Tahun', 'Bulan', 'NoKontrol']);
-//        $table->foreign('NoKontrol')->references('NoKontrol')->on('pelanggans')->onDelete('cascade');
-//     });
-// }
