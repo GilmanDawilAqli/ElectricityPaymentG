@@ -3,21 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Pemakaian;
-use App\Models\Pelanggan;
 use Illuminate\Http\Request;
+use App\Models\Pelanggan;
 
 class PemakaianController extends Controller
 {
     public function index()
     {
-        $pemakaian = Pemakaian::with('pelanggan')->get();
-        return view('CRUD.pemakaian.index', compact('pemakaian'));
+        $pemakaian = Pemakaian::with('pelanggan')->get(); // Pastikan relasi pelanggan dimuat
+        return view('pemakaian', compact('pemakaian'));
     }
 
     public function create()
     {
-        $pelanggan = Pelanggan::all(); // Ambil data pelanggan untuk dropdown
-        return view('CRUD.pemakaian.cu-pemakaian', compact('pelanggan'));
+        return view('CRUD.pemakaian.cu-pemakaian');
     }
 
     public function store(Request $request)
@@ -25,42 +24,80 @@ class PemakaianController extends Controller
         $request->validate([
             'Tahun' => 'required|integer',
             'Bulan' => 'required|integer|min:1|max:12',
-            'NoKontrol' => 'required|exists:pelanggan,NoKontrol',
-            'MeterAwal' => 'required|integer|min:0',
-            'MeterAkhir' => 'required|integer|min:0|gte:MeterAwal',
+            'NoKontrol' => 'required|string|exists:pelanggan,NoKontrol',
+            'MeterAwal' => 'required|integer',
+            'MeterAkhir' => 'required|integer|gte:MeterAwal',
             'BiayaBebanPemakai' => 'required|numeric',
             'BiayaPemakaian' => 'required|numeric',
         ]);
 
-        Pemakaian::create($request->all());
-        return redirect()->route('pemakaian.index')->with('success', 'Pemakaian created successfully.');
+        $jumlahPakai = $request->MeterAkhir - $request->MeterAwal;
+
+        Pemakaian::create([
+            'NoKontrol' => $request->NoKontrol,
+            'Tahun' => $request->Tahun,
+            'Bulan' => $request->Bulan,
+            'MeterAwal' => $request->MeterAwal,
+            'MeterAkhir' => $request->MeterAkhir,
+            'JumlahPakai' => $jumlahPakai,
+            'BiayaBebanPemakai' => $request->BiayaBebanPemakai,
+            'BiayaPemakaian' => $request->BiayaPemakaian,
+        ]);
+        return redirect()->route('pemakaian.index')->with('success', 'Data berhasil ditambahkan.');
     }
 
-    public function edit(Pemakaian $pemakaian)
+    public function edit($NoKontrol)
     {
-        $pelanggan = Pelanggan::all(); // Ambil data pelanggan untuk dropdown
-        return view('CRUD.pemakaian.cu-pemakaian', compact('pemakaian', 'pelanggan'));
+        $pemakaian = Pemakaian::where('NoKontrol', $NoKontrol)->firstOrFail();
+    
+        return view('CRUD.pemakaian.cu-pemakaian', compact('pemakaian'));
     }
-
-    public function update(Request $request, Pemakaian $pemakaian)
+    public function update(Request $request, $NoKontrol)
     {
         $request->validate([
-            'Tahun' => 'required|integer',
-            'Bulan' => 'required|integer|min:1|max:12',
-            'NoKontrol' => 'required|exists:pelanggan,NoKontrol',
-            'MeterAwal' => 'required|integer|min:0',
-            'MeterAkhir' => 'required|integer|min:0|gte:MeterAwal',
+            'MeterAwal' => 'required|integer',
+            'MeterAkhir' => 'required|integer|gte:MeterAwal',
             'BiayaBebanPemakai' => 'required|numeric',
             'BiayaPemakaian' => 'required|numeric',
         ]);
+    
+        $pemakaian = Pemakaian::where('NoKontrol', $NoKontrol)->firstOrFail();
+    
+        $pemakaian->update($request->only([
+            'MeterAwal',
+            'MeterAkhir',
+            'BiayaBebanPemakai',
+            'BiayaPemakaian',
+        ]));
+        return redirect()->route('pemakaian.index')->with('success', 'Data berhasil diperbarui.');
+    }
+    
+    public function destroy($tahun, $bulan, $NoKontrol)
+    {
+        $pemakaian = Pemakaian::where('Tahun', $tahun)
+            ->where('Bulan', $bulan)
+            ->where('NoKontrol', $NoKontrol)
+            ->firstOrFail();
 
-        $pemakaian->update($request->all());
-        return redirect()->route('pemakaian.index')->with('success', 'Pemakaian updated successfully.');
+        $pemakaian->delete();
+        return redirect()->route('pemakaian.index')->with('success', 'Data berhasil dihapus.');
     }
 
-    public function destroy(Pemakaian $pemakaian)
+    public function getPelanggan(Request $request)
     {
-        $pemakaian->delete();
-        return redirect()->route('pemakaian.index')->with('success', 'Pemakaian deleted successfully.');
+        $term = $request->input('term');
+        $pelanggan = Pelanggan::where('NoKontrol', 'like', "%{$term}%")->get(['NoKontrol']);
+        return response()->json($pelanggan);
+    
+    }
+    public function getDetailPelanggan($NoKontrol)
+    {
+        $pelanggan = Pelanggan::where('NoKontrol', $NoKontrol)->firstOrFail();
+        $tarif = \App\Models\Tarif::where('JenisPelanggan', $pelanggan->JenisPelanggan)->first();
+
+        return response()->json([
+            'Nama' => $pelanggan->Nama,
+            'BiayaBeban' => $tarif->BiayaBeban ?? 0, // Jika tidak ada data di tabel Tarif, default ke 0
+        ]);
     }
 }

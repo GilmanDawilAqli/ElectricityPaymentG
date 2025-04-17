@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('pemakaian', function (Blueprint $table) {
@@ -17,6 +14,7 @@ return new class extends Migration
             $table->char('NoKontrol', 12);
             $table->integer('MeterAwal');
             $table->integer('MeterAkhir');
+            $table->integer('JumlahPakai');
             $table->decimal('BiayaBebanPemakai', 10, 2);
             $table->decimal('BiayaPemakaian', 12, 2);
             $table->timestamps();

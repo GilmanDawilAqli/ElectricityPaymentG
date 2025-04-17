@@ -2,10 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\TarifController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PemakaianController;
-
 //----------------------------------------------------------------- Guest Site
 
 Route::get('/login', function () {
@@ -24,11 +24,11 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-Route::middleware('auth')->group(function () {
-    Route::get('/history', function () {
-        return view('history', ['title' => 'History']);
-    });
-});
+// Route::middleware('auth')->group(function () {
+//     Route::get('/history', function () {
+//         return view('history', ['title' => 'History']);
+//     });
+// });
 
 Route::middleware('auth')->group(function () {
     Route::get('/pelanggan', function () {
@@ -71,15 +71,17 @@ Route::post('/login', [AuthController::class, 'login']); //
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 // CRUD Pelanggan
-Route::get('/pelanggan', [PelangganController::class, 'index'])->name('pelanggan.pelanggan');
-Route::get('/pelanggan/create', [PelangganController::class, 'create'])->name('pelanggan.pelanggan');
-Route::post('/pelanggan/store', [PelangganController::class, 'store'])->name('pelanggan.pelanggan');
-Route::get('/pelanggan/{pelanggan}/edit', [PelangganController::class, 'edit'])->name('pelanggan.pelanggan');
-Route::put('/pelanggan/{pelanggan}', [PelangganController::class, 'update'])->name('pelanggan.pelanggan');
-Route::delete('/pelanggan/{pelanggan}', [PelangganController::class, 'destroy'])->name('pelanggan.pelanggan');
-Route::get('/pelanggan/{pelanggan}', [PelangganController::class, 'show'])->name('pelanggan.pelanggan');
-
+Route::resource('pelanggan', PelangganController::class);
 // CRUD TARIF
 Route::resource('tarif', TarifController::class);
-
+// CRUD Pemakaian
 Route::resource('pemakaian', PemakaianController::class);
+Route::get('/api/pelanggan', [PemakaianController::class, 'getPelanggan'])->name('api.pelanggan');
+Route::get('/api/tarif', [TarifController::class, 'getTarif'])->name('api.tarif');
+Route::get('/get-pelanggan', [PemakaianController::class, 'getPelanggan'])->name('get.pelanggan');
+Route::get('/get-detail-pelanggan/{noKontrol}', [PemakaianController::class, 'getDetailPelanggan']);
+Route::get('/pemakaian/{NoKontrol}/edit', [PemakaianController::class, 'edit'])->name('pemakaian.edit');
+Route::put('/pemakaian/{NoKontrol}', [PemakaianController::class, 'update'])->name('pemakaian.update');
+
+// Petugas
+Route::resource('petugas', UserController::class);
