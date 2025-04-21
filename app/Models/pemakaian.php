@@ -12,17 +12,18 @@ class Pemakaian extends Model
     protected $table = 'pemakaian';
     protected $primaryKey = ['Tahun', 'Bulan', 'NoKontrol'];
     public $incrementing = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'Tahun',
         'Bulan',
         'NoKontrol',
+        'JumlahPakai',
         'MeterAwal',
         'MeterAkhir',
         'BiayaBebanPemakai',
         'BiayaPemakaian',
     ];
-
     public function pelanggan()
     {
         return $this->belongsTo(Pelanggan::class, 'NoKontrol', 'NoKontrol');

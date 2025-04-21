@@ -10,12 +10,19 @@ class pelanggan extends Model
     use HasFactory;
 
     protected $table = 'pelanggan';
+    protected $primaryKey = 'NoKontrol';
+    public $incrementing = false;
+    public $timestamps = true;
 
     protected $fillable = [
         'NoKontrol',
-        'nama',
-        'telepon',
-        'Jenis_Plg',
-        'alamat',
+        'Nama',
+        'Alamat',
+        'Telepon',
+        'JenisPelanggan',
     ];
+    public function tarif()
+    {
+        return $this->belongsTo(Tarif::class, 'JenisPelanggan', 'JenisPelanggan');
+    }
 }

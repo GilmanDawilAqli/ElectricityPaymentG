@@ -11,6 +11,7 @@ class tarif extends Model
     protected $table = 'tarif';
     protected $primaryKey = 'JenisPelanggan';
     public $incrementing = false;
+    public $timestamps = true;
     protected $keyType = 'string';
 
     protected $fillable = [

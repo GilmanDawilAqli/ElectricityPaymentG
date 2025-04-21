@@ -33,6 +33,7 @@ class TarifController extends Controller
 
     public function edit(tarif $tarif)
     {
+        $tarif = Tarif::findOrFail($tarif->JenisPelanggan);
         return view('CRUD.tarif.cu-tarif', compact('tarif'));
     }
 
@@ -53,4 +54,10 @@ class TarifController extends Controller
         $tarif->delete();
         return redirect()->route('tarif.index')->with('success', 'Tarif deleted successfully.');
     }
+    public function getTarif(Request $request)
+{
+    $jenis = $request->input('jenis');
+    $tarif = Tarif::where('JenisPelanggan', $jenis)->first(['BiayaBeban']);
+    return response()->json($tarif);
+}
 }
