@@ -17,6 +17,7 @@ return new class extends Migration
             $table->integer('JumlahPakai');
             $table->decimal('BiayaBebanPemakai', 10, 2);
             $table->decimal('BiayaPemakaian', 12, 2);
+            $table->enum('Status', ['Lunas', 'Belum Lunas'])->default('Belum Lunas');
             $table->timestamps();
         
             $table->primary(['Tahun', 'Bulan', 'NoKontrol']);

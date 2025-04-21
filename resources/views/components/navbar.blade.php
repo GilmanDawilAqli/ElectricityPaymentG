@@ -9,6 +9,10 @@
           <div class="ml-10 flex items-baseline space-x-4">
             <x-nav-link href="/home" :active="request()->is('home')">Home</x-nav-link>
             <x-nav-link href="/pembayaran" :active="request()->is('pembayaran')">Pembayaran</x-nav-link>
+            <x-nav-link href="/pelanggan" :active="request()->is('pelanggan')">Pelanggan</x-nav-link>
+            <x-nav-link href="/petugas" :active="request()->is('petugas')">Petugas</x-nav-link>
+            <x-nav-link href="/pemakaian" :active="request()->is('pemakaian')">Pemakaian</x-nav-link>
+            <x-nav-link href="/tarif" :active="request()->is('tarif')">Tarif</x-nav-link>
           </div>
         </div>
       </div>

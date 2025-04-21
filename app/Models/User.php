@@ -47,6 +47,5 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
 }
-    // protected $table = '...'; -> untuk tabel yang dituju
-    // ptotected $primaryKey = '...'; -> untuk primary key

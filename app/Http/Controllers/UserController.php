@@ -19,14 +19,14 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
-            'role' => 'required|boolean', // Validasi role sebagai boolean
+            'admin' => 'required|boolean', // Validasi admin sebagai boolean
         ]);
 
         User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password), // Enkripsi password
-            'role' => $request->role, // Simpan role
+            'admin' => $request->admin, // Simpan admin
         ]);
 
         return redirect()->route('petugas.index')->with('success', 'Petugas berhasil ditambahkan.');
@@ -47,14 +47,14 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $petuga->id,
             'password' => 'nullable|string|min:8|confirmed',
-            'role' => 'required|boolean', // Validasi role sebagai boolean
+            'admin' => 'required|boolean', // Validasi admin sebagai boolean
         ]);
 
         $petuga->update([
             'name' => $request->name,
             'email' => $request->email,
             'password' => $request->password ? bcrypt($request->password) : $petuga->password,
-            'role' => $request->role, // Perbarui role
+            'admin' => $request->admin, // Perbarui admin
     ]);
 
     return redirect()->route('petugas.index')->with('success', 'Petugas berhasil diperbarui.');

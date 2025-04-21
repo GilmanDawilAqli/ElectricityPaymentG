@@ -64,7 +64,6 @@ Route::middleware('admin')->group(function () {
     });
 });
 
-
 // Login & Logout
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']); // 
@@ -76,12 +75,8 @@ Route::resource('pelanggan', PelangganController::class);
 Route::resource('tarif', TarifController::class);
 // CRUD Pemakaian
 Route::resource('pemakaian', PemakaianController::class);
-Route::get('/api/pelanggan', [PemakaianController::class, 'getPelanggan'])->name('api.pelanggan');
-Route::get('/api/tarif', [TarifController::class, 'getTarif'])->name('api.tarif');
-Route::get('/get-pelanggan', [PemakaianController::class, 'getPelanggan'])->name('get.pelanggan');
-Route::get('/get-detail-pelanggan/{noKontrol}', [PemakaianController::class, 'getDetailPelanggan']);
-Route::get('/pemakaian/{NoKontrol}/edit', [PemakaianController::class, 'edit'])->name('pemakaian.edit');
-Route::put('/pemakaian/{NoKontrol}', [PemakaianController::class, 'update'])->name('pemakaian.update');
+Route::get('/search-nokontrol', [App\Http\Controllers\PemakaianController::class, 'searchNoKontrol']);
+
 
 // Petugas
 Route::resource('petugas', UserController::class);

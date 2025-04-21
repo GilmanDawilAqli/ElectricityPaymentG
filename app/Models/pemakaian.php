@@ -23,6 +23,7 @@ class Pemakaian extends Model
         'MeterAkhir',
         'BiayaBebanPemakai',
         'BiayaPemakaian',
+        'Status',
     ];
     public function pelanggan()
     {
