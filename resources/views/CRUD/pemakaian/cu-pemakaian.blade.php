@@ -21,7 +21,8 @@
                     <input 
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                         type="text" 
-                        id="NoKontrolSearch" 
+                        name="NoKontrol" 
+                        id="NoKontrol" 
                         autocomplete="off"
                     >
                     <ul 
@@ -61,16 +62,18 @@
                 {{-- Bulan --}}
                 <div>
                     <label 
-                        for="Bulan">
-                        Bulan:</label
-                    >
+                        for="Bulan"
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                            >Bulan:
+                        </label>
                     <select 
                         name="Bulan" 
                         id="Bulan" required 
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                         @foreach ($bulanList as $kode => $nama)
                             <option 
-                                value="{{ $kode }}" {{ $kode == $bulanSekarang ? 'selected' : '' }}>{{ $nama }}
+                                value="{{ $kode }}" {{ $kode == $bulanSekarang ? 'selected' : '' }}>
+                                {{ $nama }}
                             </option>
                         @endforeach
                     </select>
@@ -135,6 +138,8 @@
                         type="number" required readonly
                     >
                 </div>
+                <input type="hidden" id="nilaiPerVA">
+
                 {{-- Jumlah Pakai --}}
                 <div>
                     <label 
@@ -146,6 +151,7 @@
                         type="number" readonly 
                         id="JumlahPakai"
                         name="JumlahPakai"
+                        value="{{ old('JumlahPakai') }}"
                         class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                     >
                 </div>
@@ -179,9 +185,44 @@
 </section>
 
 <script>
+   const meterAwal = document.getElementById("MeterAwal");
+    const meterAkhir = document.getElementById("MeterAkhir");
+    const biayaBeban = document.getElementById("BiayaBebanPemakai");
+    const biayaPemakaian = document.getElementById("BiayaPemakaian");
+    const jumlahPakai = document.getElementById("JumlahPakai");
+
+    let tarifKwh = 0;
+
+    function hitungOtomatis() {
+        const awal = parseInt(meterAwal.value) || 0;
+        const akhir = parseInt(meterAkhir.value) || 0;
+        const beban = parseFloat(biayaBeban.value) || 0;
+
+        // Agar Pemakain tidak negatif
+        const pemakaian = Math.max(akhir - awal, 0);
+        biayaPemakaian.value = pemakaian;
+
+        // Calculate total cost: (tarifKwh * pemakaian) + biayaBeban
+        const jumlah = (tarifKwh * pemakaian) + beban;
+        jumlahPakai.value = jumlah.toFixed(2); // Format to 2 decimal places
+    }
+
+    // Add event listeners to both meter inputs to recalculate when either changes
+    meterAwal.addEventListener("input", hitungOtomatis);
+    meterAkhir.addEventListener("input", hitungOtomatis);
+    biayaBeban.addEventListener("input", hitungOtomatis); // Optional: recalculate if biayaBeban changes manually
+
     document.addEventListener("DOMContentLoaded", function () {
-        const input = document.getElementById("NoKontrolSearch");
+        const input = document.getElementById("NoKontrol");
         const dropdown = document.getElementById("dropdown-results");
+
+        // Optional: Add a display for TarifKWH if you want to show it to the user
+        const tarifDisplay = document.createElement('div');
+        tarifDisplay.id = 'TarifKwhDisplay';
+        tarifDisplay.className = 'text-sm text-gray-600 mt-1';
+        if (document.querySelector('.form-group:has(#BiayaBebanPemakai)')) {
+            document.querySelector('.form-group:has(#BiayaBebanPemakai)').appendChild(tarifDisplay);
+        }
 
         input.addEventListener("input", function () {
             const query = this.value;
@@ -205,15 +246,49 @@
                         const li = document.createElement('li');
                         li.textContent = item;
                         li.className = "px-4 py-2 hover:bg-blue-100 cursor-pointer dark:hover:bg-blue-700 dark:text-white";
+
                         li.addEventListener("click", function () {
                             input.value = item;
                             dropdown.classList.add("hidden");
                             dropdown.innerHTML = '';
+
+                            // Fetch customer data including tariff information
+                            fetch(`/get-pelanggan-info/${item}`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    document.getElementById("nama_pelanggan").value = data.nama;
+                                    document.getElementById("MeterAwal").value = data.meter_akhir_sebelumnya;
+                                    
+                                    // Set biayaBeban from the Tarif table via the JenisPelanggan relation
+                                    document.getElementById("BiayaBebanPemakai").value = data.biaya_beban;
+                                    
+                                    // Set tarifKwh from the Tarif table via the JenisPelanggan relation
+                                    tarifKwh = parseFloat(data.tarifKwh) || 0;
+                                    
+                                    // Display the tariff rate for user reference
+                                    if (document.getElementById("TarifKwhDisplay")) {
+                                        document.getElementById("TarifKwhDisplay").textContent = `Tarif per kWh: Rp ${tarifKwh.toLocaleString('id-ID')}`;
+                                    }
+
+                                    // Clear calculation fields
+                                    document.getElementById("MeterAkhir").value = '';
+                                    document.getElementById("BiayaPemakaian").value = '';
+                                    document.getElementById("JumlahPakai").value = '';
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching pelanggan info:', error);
+                                });
                         });
+
                         dropdown.appendChild(li);
                     });
 
                     dropdown.classList.remove("hidden");
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                    dropdown.classList.add("hidden");
+                    dropdown.innerHTML = '';
                 });
         });
 

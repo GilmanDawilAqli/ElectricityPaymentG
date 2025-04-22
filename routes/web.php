@@ -6,6 +6,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\TarifController;
 use App\Http\Controllers\PelangganController;
 use App\Http\Controllers\PemakaianController;
+use App\Http\Controllers\PembayaranController;
 //----------------------------------------------------------------- Guest Site
 
 Route::get('/login', function () {
@@ -75,8 +76,14 @@ Route::resource('pelanggan', PelangganController::class);
 Route::resource('tarif', TarifController::class);
 // CRUD Pemakaian
 Route::resource('pemakaian', PemakaianController::class);
-Route::get('/search-nokontrol', [App\Http\Controllers\PemakaianController::class, 'searchNoKontrol']);
+Route::get('/search-nokontrol', [PemakaianController::class, 'searchNoKontrol'])->name('search.nokontrol');
+Route::get('/get-pelanggan-info/{NoKontrol}', [PemakaianController::class, 'getPelangganInfo']);
 
 
 // Petugas
 Route::resource('petugas', UserController::class);
+
+// Pembayaran
+Route::resource('pembayaran', PembayaranController::class);
+Route::get('/pembayaran/bayar/{id}', [PembayaranController::class, 'showFormBayar'])->name('pembayaran.form_bayar');
+Route::post('/pembayaran/proses/{id}', [PembayaranController::class, 'processBayar'])->name('pembayaran.proses_bayar');

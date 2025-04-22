@@ -9,9 +9,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('pemakaian', function (Blueprint $table) {
+            $table->id();
             $table->year('Tahun');
             $table->unsignedTinyInteger('Bulan');
-            $table->char('NoKontrol', 12);
+            $table->string('NoKontrol', 12);
             $table->integer('MeterAwal');
             $table->integer('MeterAkhir');
             $table->integer('JumlahPakai');
@@ -20,7 +21,6 @@ return new class extends Migration
             $table->enum('Status', ['Lunas', 'Belum Lunas'])->default('Belum Lunas');
             $table->timestamps();
         
-            $table->primary(['Tahun', 'Bulan', 'NoKontrol']);
             $table->foreign('NoKontrol')->references('NoKontrol')->on('pelanggan')->onDelete('cascade');
         });
         

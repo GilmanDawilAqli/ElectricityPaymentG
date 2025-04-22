@@ -18,10 +18,10 @@ class PemakaianController extends Controller
     public function create()
     {
         $bulanList = [
-            '01' => 'Januari', '02' => 'Februari', '03' => 'Maret',
-            '04' => 'April', '05' => 'Mei', '06' => 'Juni',
-            '07' => 'Juli', '08' => 'Agustus', '09' => 'September',
-            '10' => 'Oktober', '11' => 'November', '12' => 'Desember',
+            1 => 'Januari', 2 => 'Februari', 3 => 'Maret',
+            4 => 'April', 5 => 'Mei', 6 => 'Juni',
+            7 => 'Juli', 8 => 'Agustus', 9 => 'September',
+            10 => 'Oktober', 11 => 'November', 12 => 'Desember',
         ];
     
         $tahunSekarang = Carbon::now()->year;
@@ -42,6 +42,7 @@ class PemakaianController extends Controller
             'MeterAkhir' => 'required|integer|gte:MeterAwal',
             'BiayaBebanPemakai' => 'required|numeric',
             'BiayaPemakaian' => 'required|numeric',
+            'JumlahPakai' => 'required|numeric',
         ]);
 
         $cekDuplikat = Pemakaian::where('NoKontrol', $request->NoKontrol)
@@ -54,7 +55,20 @@ class PemakaianController extends Controller
         }
 
 
-        $jumlahPakai = $request->MeterAkhir - $request->MeterAwal;
+        // Ambil data pelanggan dan relasi tarif
+        $pelanggan = Pelanggan::with('tarif')->where('NoKontrol', $request->NoKontrol)->first();
+
+        if (!$pelanggan || !$pelanggan->tarif) {
+            return back()->withErrors(['NoKontrol' => 'Tarif tidak ditemukan untuk pelanggan ini.'])->withInput();
+        }
+
+        // Ambil tarif dan biaya beban dari relasi
+        $tarifKwh = $pelanggan->tarif->TarifKWH;
+        $biayaBeban = $pelanggan->tarif->BiayaBeban;
+
+        // Hitung biaya pemakaian dan jumlah pakai
+        $biayaPemakaian = max($request->MeterAkhir - $request->MeterAwal, 0); // Pastikan tidak negatif
+        $jumlahPakai = ($tarifKwh * $biayaPemakaian) + $biayaBeban;
 
         Pemakaian::create([
             'NoKontrol' => $request->NoKontrol,
@@ -62,33 +76,58 @@ class PemakaianController extends Controller
             'Bulan' => $request->Bulan,
             'MeterAwal' => $request->MeterAwal,
             'MeterAkhir' => $request->MeterAkhir,
-            'JumlahPakai' => $jumlahPakai,
             'BiayaBebanPemakai' => $request->BiayaBebanPemakai,
             'BiayaPemakaian' => $request->BiayaPemakaian,
+            'JumlahPakai' => $jumlahPakai,
             'Status' => 'Belum Lunas',
         ]);
         return redirect()->route('pemakaian.index')->with('success', 'Data berhasil ditambahkan.');
     }
     
-    public function destroy($tahun, $bulan, $NoKontrol)
+    public function destroy($id)
     {
-        $pemakaian = Pemakaian::where('Tahun', $tahun)
-            ->where('Bulan', $bulan)
-            ->where('NoKontrol', $NoKontrol)
-            ->firstOrFail();
-
+        $pemakaian = Pemakaian::findOrFail($id);
         $pemakaian->delete();
-        return redirect()->route('pemakaian.index')->with('success', 'Data berhasil dihapus.');
+        return redirect()->route('pemakaian.index')->with('success', 'Data pemakaian berhasil dihapus.');
     }
+
     public function searchNoKontrol(Request $request)
     {
         $search = $request->query('q');
         
-        $results = \App\Models\Pemakaian::where('NoKontrol', 'like', '%' . $search . '%')
-            ->groupBy('NoKontrol')
+        $results = Pelanggan::where('NoKontrol', 'like', '%' . $search . '%')
             ->limit(12)
             ->pluck('NoKontrol');
 
         return response()->json($results);
     }
+    public function getPelanggan(Request $request)
+    {
+        $data = Pelanggan::where('NoKontrol', 'LIKE', '%' . $request->term . '%')
+            ->select('NoKontrol')
+            ->get();
+
+        return response()->json($data);
+    }
+    public function getPelangganInfo($NoKontrol)
+    {
+        $pelanggan = Pelanggan::with('tarif')->find($NoKontrol);
+    
+        if (!$pelanggan) {
+            return response()->json(['error' => 'Pelanggan tidak ditemukan'], 404);
+        }
+    
+        // Ambil meter akhir dari bulan sebelumnya (jika ada)
+        $lastUsage = Pemakaian::where('NoKontrol', $NoKontrol)
+            ->orderByDesc('Tahun')
+            ->orderByDesc('Bulan')
+            ->first();
+    
+        return response()->json([
+            'nama' => $pelanggan->Nama,
+            'biaya_beban' => $pelanggan->tarif->BiayaBeban ?? 0,
+            'meter_akhir_sebelumnya' => $lastUsage->MeterAkhir ?? 0
+        ]);
+    }
+    
 }

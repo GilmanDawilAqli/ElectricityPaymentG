@@ -11,32 +11,55 @@
             @if (isset($pelanggan))
                 @method('PUT')
             @endif
-
+            
             <div class="grid gap-4 mb-4 sm:grid-cols-2">
+                {{-- No Kontrol --}}
                 <div class="mb-3">
-                    <label for="NoKontrol" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">No Kontrol</label>
-                    <input type="text" name="NoKontrol" id="NoKontrol" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                        value="{{ $pelanggan->NoKontrol ?? old('NoKontrol') }}" {{ isset($pelanggan) ? 'readonly' : '' }} required>
+                    <label 
+                        for="NoKontrol" 
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >No Kontrol
+                    </label>
+                    <input 
+                        type="number" 
+                        name="NoKontrol" 
+                        id="NoKontrol"  required 
+                        minlength="12" maxlength="12" pattern="\d{12}" 
+                        title="No Kontrol harus 12 digit angka."
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                        value="{{ $pelanggan->NoKontrol ?? $generatedNoKontrol ?? old('NoKontrol') }}" 
+                        {{ isset($pelanggan) ? 'readonly' : 'readonly' }}>
                 </div>
-
+                {{-- Nama --}}
                 <div class="mb-3">
                     <label for="Nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
                     <input type="text" name="Nama" id="Nama" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                         value="{{ $pelanggan->Nama ?? old('Nama') }}" required>
                 </div>
-
+                {{-- Alamat --}}
                 <div class="mb-3">
                     <label for="Alamat" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alamat</label>
                     <input type="text" name="Alamat" id="Alamat" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
                         value="{{ $pelanggan->Alamat ?? old('Alamat') }}" required>
                 </div>
-
+                {{-- No Telepon --}}
                 <div class="mb-3">
-                    <label for="Telepon" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Telepon</label>
-                    <input type="text" name="Telepon" id="Telepon" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                        value="{{ $pelanggan->Telepon ?? old('Telepon') }}" required>
+                    <label 
+                        for="Telepon" 
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Telepon
+                    </label>
+                    <input 
+                        type="text" 
+                        name="Telepon" 
+                        id="Telepon" 
+                        maxlength="15" required
+                        title="No Telepon maksimal 15 digit angka."
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                        value="{{ $pelanggan->Telepon ?? old('Telepon') }}" 
+                    >
                 </div>
-
+                {{-- Jenis Pelanggan --}}
                 <div class="mb-3">
                     <label 
                         for="JenisPelanggan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -62,3 +85,21 @@
         </form>
     </div>
 </section>
+
+<script>
+    document.getElementById('Telepon').addEventListener('input', function (e) {
+        let value = e.target.value;
+
+        // Hanya izinkan angka dan tanda +
+        value = value.replace(/[^0-9+]/g, '');
+
+        // Pastikan hanya satu tanda + di awal
+        if (value.indexOf('+') > 0) {
+            value = value.replace(/\+/g, '');
+        } else if (value.indexOf('+') === 0) {
+            value = '+' + value.slice(1).replace(/\+/g, '');
+        }
+
+        e.target.value = value;
+    });
+</script>

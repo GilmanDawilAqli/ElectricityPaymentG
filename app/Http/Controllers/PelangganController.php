@@ -17,7 +17,19 @@ class PelangganController extends Controller
     public function create()
     {
         $tarif = Tarif::all();
-        return view('CRUD.pelanggan.cu-pelanggan', compact('tarif'));
+
+        // Ambil tanggal hari ini dalam format YYMMDD
+        $prefix = now()->format('ym'); // contoh: '250422'
+    
+        // Cari jumlah pelanggan hari ini dengan prefix yang sama
+        $countToday = Pelanggan::where('NoKontrol', 'like', "$prefix%")->count();
+    
+        // Nomor urut 6 digit, mulai dari 000001
+        $number = str_pad($countToday + 1, 8, '0', STR_PAD_LEFT);
+    
+        $generatedNoKontrol = $prefix . $number;
+    
+        return view('CRUD.pelanggan.cu-pelanggan', compact('tarif', 'generatedNoKontrol'));
     }
 
     public function store(Request $request)
@@ -25,10 +37,10 @@ class PelangganController extends Controller
         // dd($request->all());
         $request->validate([
             
-            'NoKontrol' => 'required|string|max:12|unique:pelanggan,NoKontrol',
+            'NoKontrol' => 'required|string|min:12|max:12|unique:pelanggan,NoKontrol',
             'Nama' => 'required|string|max:50',
             'Alamat' => 'required|string|max:150',
-            'Telepon' => 'required|string|max:15',
+            'Telepon' => 'required|string|max:15|regex:/^\+?[0-9]+$/',
             'JenisPelanggan' => 'required|string|exists:tarif,JenisPelanggan',
         ]);
 
@@ -48,7 +60,7 @@ class PelangganController extends Controller
         $request->validate([
             'Nama' => 'required|string|max:50',
             'Alamat' => 'required|string|max:150',
-            'Telepon' => 'required|string|max:15',
+            'Telepon' => 'required|string|max:15|regex:/^\+?[0-9]+$/',
             'JenisPelanggan' => 'required|string|exists:tarif,JenisPelanggan',
         ]);
 

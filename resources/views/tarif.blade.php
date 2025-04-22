@@ -19,7 +19,7 @@
                         <tr>
                             <th scope="col" class="px-4 py-3">Jenis</th>
                             <th scope="col" class="px-4 py-3">Biaya Beban</th>
-                            <th scope="col" class="px-4 py-3">Tarif kWh</th>
+                            <th scope="col" class="px-4 py-3">Tarif / kWh</th>
                             <th scope="col" class="px-4 py-3">
                                 <span class="sr-only">Actions</span>
                             </th>
@@ -30,7 +30,7 @@
                         <tr class="border-b dark:border-gray-700">
                             <th scope="row" class="px-4 py-3 text-gray-900 whitespace-nowrap dark:text-white">{{ $t->JenisPelanggan }}</th>
                             <td class="px-4 py-3">{{ $t->BiayaBeban }}</td>
-                            <td class="px-4 py-3">{{ $t->TarifKWH }} VA</td>
+                            <td class="px-4 py-3">{{ $t->TarifKWH }} / kWh</td>
                             <td class="px-4 py-3 flex items-center justify-end">
                                 <button id="dropdown-button-{{ $t->JenisPelanggan }}-{{ $t->TarifKWH }}" data-dropdown-toggle="dropdown-{{ $t->JenisPelanggan }}-{{ $t->TarifKWH }}" class="inline-flex items-center text-sm font-medium hover:bg-gray-100 dark:hover:bg-gray-700 p-1.5 dark:hover-bg-gray-800 text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
                                     <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">

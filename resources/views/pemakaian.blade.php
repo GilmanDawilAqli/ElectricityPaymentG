@@ -39,9 +39,10 @@
                             <th scope="col" class="px-4 py-3">Meter Awal</th>
                             <th scope="col" class="px-4 py-3">Meter Akhir</th>
                             <th scope="col" class="px-4 py-3">Biaya Beban</th>
-                            <th scope="col" class="px-4 py-3">Biaya Pemakaian</th>
+                            <th scope="col" class="px-4 py-3">Total Pemakaian</th>
+                            <th scope="col" class="px-4 py-3">Jumlah Pakai</th>
                             <th scope="col" class="px-4 py-3">Status</th>
-                            <th scope="col" class="px-4 py-3">
+                            <th scope="col" class="px-4 py-3">Aksi
                                 <span class="sr-only">Aksi</span>
                             </th>
                         </tr>
@@ -50,13 +51,14 @@
                         @foreach ($pemakaian as $data)
                         <tr class="border-b dark:border-gray-700">
                             <th scope="row" class="px-4 py-3 text-gray-900 whitespace-nowrap dark:text-white">{{ $data->Tahun }}</th>
-                            <td class="px-4 py-3">{{ $data->Bulan }}</td>
+                            <td class="px-4 py-3">{{ $data->nama_bulan }}</td>
                             <td class="px-4 py-3">{{ $data->NoKontrol }}</td>
                             <td class="px-4 py-3">{{ $data->pelanggan->Nama ?? '-' }}</td>
                             <td class="px-4 py-3">{{ $data->MeterAwal }}</td>
                             <td class="px-4 py-3">{{ $data->MeterAkhir }}</td>
                             <td class="px-4 py-3">{{ $data->BiayaBebanPemakai }}</td>
-                            <td class="px-4 py-3">{{ $data->BiayaPemakaian }}</td>
+                            <td class="px-4 py-3">{{ $data->BiayaPemakaian }} VA</td>
+                            <td class="px-4 py-3">{{ $data->JumlahPakai }}</td>
                             <td class="px-4 py-3">
                                 @if ($data->Status == 'Lunas')
                                     <span class="text-green-500 font-semibold">Lunas</span>
@@ -67,11 +69,13 @@
                             <td class="px-4 py-3 flex items-center justify-end">
                                 <ul class="py-1 text-sm" aria-labelledby="dropdown-button-{{ $data->Tahun }}-{{ $data->Bulan }}-{{ $data->NoKontrol }}">
                                     <li>
-                                        <form action="{{ route('pemakaian.destroy', [$data->Tahun, $data->Bulan, $data->NoKontrol]) }}" method="POST" style="display:inline;">
+                                        <form 
+                                            action="{{ route('pemakaian.destroy', $data->id) }}" 
+                                            method="POST" style="display:inline;">
                                             @csrf
                                             @method('DELETE')
                                             <button 
-                                                type="submit" data-modal-target="deleteModal" data-modal-toggle="deleteModal" 
+                                                type="submit"
                                                 class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-red-500 dark:hover:text-red-400"
                                                 onclick="return confirm('Yakin ingin menghapus data ini?')">
                                                 <svg class="w-4 h-4 mr-2" viewbox="0 0 14 15" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
