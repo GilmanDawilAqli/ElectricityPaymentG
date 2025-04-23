@@ -60,10 +60,26 @@ class PembayaranController extends Controller
         // Ambil data pemakaian berdasarkan ID
         $pemakaian = Pemakaian::findOrFail($id);
 
+        // Cek apakah masih ada pemakaian sebelumnya yang belum lunas untuk pelanggan yang sama
+        $cekBelumLunas = Pemakaian::where('NoKontrol', $pemakaian->NoKontrol)
+            ->where('status', 'Belum Lunas')
+            ->where(function ($query) use ($pemakaian) {
+                $query->where('Tahun', '<', $pemakaian->Tahun)
+                    ->orWhere(function ($query) use ($pemakaian) {
+                        $query->where('Tahun', $pemakaian->Tahun)
+                                ->where('Bulan', '<', $pemakaian->Bulan);
+                    });
+            })
+            ->exists();
+
+        if ($cekBelumLunas) {
+            return redirect()->back()->with('error', 'Masih ada tagihan sebelumnya yang belum lunas. Harap bayar tagihan terlama terlebih dahulu.');
+        }
+
         // Validasi input
         $request->validate([
-            'JumlahBayar' => 'required|numeric|min:' . $pemakaian->JumlahPakai, // Tidak boleh kurang dari JumlahTagihan
-            'MetodePembayaran' => 'required|in:tunai,bank', // Pilihan hanya "tunai" atau "bank"
+            'JumlahBayar' => 'required|numeric|min:' . $pemakaian->JumlahPakai,
+            'MetodePembayaran' => 'required|in:tunai,bank',
         ]);
 
         // Hitung kembalian
@@ -74,20 +90,19 @@ class PembayaranController extends Controller
 
         // Simpan data pembayaran ke tabel pembayaran
         $pembayaran = new Pembayaran();
-        $pembayaran->pemakaian_id = $pemakaian->id; // ID dari tabel Pemakaian
-        $pembayaran->petugas_id = $petugas->id; // ID petugas yang sedang login
-        $pembayaran->PetugasNama = $petugas->name; // Nama petugas yang sedang login
-        $pembayaran->MetodePembayaran = $request->MetodePembayaran; // Metode pembayaran
-        $pembayaran->JumlahTagihan = $pemakaian->JumlahPakai; // Jumlah tagihan dari tabel Pemakaian
-        $pembayaran->JumlahBayar = $request->JumlahBayar; // Jumlah yang dibayarkan
-        $pembayaran->kembalian = $kembalian; // Kembalian
+        $pembayaran->pemakaian_id = $pemakaian->id;
+        $pembayaran->petugas_id = $petugas->id;
+        $pembayaran->PetugasNama = $petugas->name;
+        $pembayaran->MetodePembayaran = $request->MetodePembayaran;
+        $pembayaran->JumlahTagihan = $pemakaian->JumlahPakai;
+        $pembayaran->JumlahBayar = $request->JumlahBayar;
+        $pembayaran->kembalian = $kembalian;
         $pembayaran->save();
 
         // Update status pemakaian menjadi "Lunas"
         $pemakaian->status = 'Lunas';
         $pemakaian->save();
 
-        // Redirect kembali ke daftar pemakaian dengan pesan sukses
         return redirect()->route('pembayaran.index', $pemakaian->NoKontrol)
             ->with('success', 'Pembayaran berhasil diproses.');
     }

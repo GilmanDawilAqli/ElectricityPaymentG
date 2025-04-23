@@ -28,6 +28,10 @@ class Pemakaian extends Model
     {
         return $this->belongsTo(Pelanggan::class, 'NoKontrol', 'NoKontrol');
     }
+    public function pembayaran()
+    {
+        return $this->hasOne(Pembayaran::class, 'pemakaian_id', 'id');
+    }
     public function getNamaBulanAttribute()
     {
         $bulanList = [

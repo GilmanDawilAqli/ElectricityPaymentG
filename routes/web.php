@@ -108,8 +108,17 @@ Route::middleware('admin')->group(function () {
     });
     Route::middleware('admin')->group(function () {
         Route::get('/laporan', [LaporanController::class, 'index'])->name('laporan.index');
-        Route::get('/laporan/lunas/{id}', [LaporanController::class, 'generateLunasSingle'])->name('laporan.generateLunas');
-        Route::get('/laporan/belum-lunas/{id}', [LaporanController::class, 'generateBelumLunasSingle'])->name('laporan.generateBelumLunas');
-        Route::get('/laporan/generate-all', [LaporanController::class, 'generateAll'])->name('laporan.generateAll'); 
+        Route::get('/laporan/generate', [LaporanController::class, 'generate'])->name('laporan.generate');
+        Route::get('/laporan/generate/{id}', [LaporanController::class, 'generateSatu'])->name('laporan.generateSatu');
+    });
+    Route::get('/search-nokontrol-pemakaian', function (Request $request) {
+        $q = $request->q;
+        $results = DB::table('pemakaian')
+            ->select('NoKontrol')
+            ->where('NoKontrol', 'like', "%$q%")
+            ->groupBy('NoKontrol')
+            ->pluck('NoKontrol');
+    
+        return response()->json($results);
     });
 });
