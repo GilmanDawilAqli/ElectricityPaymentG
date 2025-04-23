@@ -185,7 +185,7 @@
 </section>
 
 <script>
-   const meterAwal = document.getElementById("MeterAwal");
+    const meterAwal = document.getElementById("MeterAwal");
     const meterAkhir = document.getElementById("MeterAkhir");
     const biayaBeban = document.getElementById("BiayaBebanPemakai");
     const biayaPemakaian = document.getElementById("BiayaPemakaian");
@@ -198,19 +198,18 @@
         const akhir = parseInt(meterAkhir.value) || 0;
         const beban = parseFloat(biayaBeban.value) || 0;
 
-        // Agar Pemakain tidak negatif
+        // Pemakaian tidak boleh negatif
         const pemakaian = Math.max(akhir - awal, 0);
         biayaPemakaian.value = pemakaian;
 
-        // Calculate total cost: (tarifKwh * pemakaian) + biayaBeban
+        // JumlahPakai = (tarifKwh * biayaPemakaian) + biayaBeban
         const jumlah = (tarifKwh * pemakaian) + beban;
-        jumlahPakai.value = jumlah.toFixed(2); // Format to 2 decimal places
+        jumlahPakai.value = jumlah.toFixed(2);
     }
 
-    // Add event listeners to both meter inputs to recalculate when either changes
     meterAwal.addEventListener("input", hitungOtomatis);
     meterAkhir.addEventListener("input", hitungOtomatis);
-    biayaBeban.addEventListener("input", hitungOtomatis); // Optional: recalculate if biayaBeban changes manually
+    biayaBeban.addEventListener("input", hitungOtomatis); 
 
     document.addEventListener("DOMContentLoaded", function () {
         const input = document.getElementById("NoKontrol");

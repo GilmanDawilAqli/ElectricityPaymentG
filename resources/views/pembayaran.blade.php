@@ -21,9 +21,8 @@
             </div>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                    <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">
                         <tr>
-                            <th scope="col" class="px-4 py-3">ID</th>
                             <th scope="col" class="px-4 py-3">Tahun</th>
                             <th scope="col" class="px-4 py-3">Bulan</th>
                             <th scope="col" class="px-4 py-3">No Kontrol</th>
@@ -39,26 +38,28 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($pembayaran as $data)
+                        @forelse($pemakaian as $item)
                         <tr class="border-b dark:border-gray-700">
-                            <td class="px-4 py-3">{{ $data->id }}</td>
-                            <td class="px-4 py-3">{{ $data->TahunTagihan }}</td>
-                            <td class="px-4 py-3">{{ $data->BulanTagihan }}</td>
-                            <td class="px-4 py-3">{{ $data->NoKontrol }}</td>
-                            <td class="px-4 py-3">{{ $pelanggan->NamaPelanggan }}</td>
-                            <td class="px-4 py-3">{{ $data->MeterAwal }}</td>
-                            <td class="px-4 py-3">{{ $data->MeterAkhir }}</td>
-                            <td class="px-4 py-3">{{ $data->BiayaBeban }}</td>
-                            <td class="px-4 py-3">{{ $data->MeterAkhir - $data->MeterAwal }}</td>
-                            <td class="px-4 py-3">{{ $data->JumlahTagihan }}</td>
+                            <td class="px-4 py-3">{{ $item->Tahun }}</td>
+                            <td class="px-4 py-3">{{ $item->nama_bulan }}</td>
+                            <td class="px-4 py-3">{{ $item->NoKontrol }}</td>
+                            <td class="px-4 py-3">{{ $item->pelanggan->Nama ?? '-' }}</td>
+                            <td class="px-4 py-3">{{ $item->MeterAwal }}</td>
+                            <td class="px-4 py-3">{{ $item->MeterAkhir }}</td>
+                            <td class="px-4 py-3">{{ $item->BiayaBebanPemakai }}</td>
+                            <td class="px-4 py-3">{{ $item->BiayaPemakaian }}</td>
+                            <td class="px-4 py-3">{{ $item->JumlahPakai }}</td>
                             <td class="px-4 py-3">
-                                <form action="{{ route('pembayaran.bayar', $data->id) }}" method="POST">
-                                    @csrf
-                                    <button type="submit" class="btn btn-primary">Bayar</button>
-                                </form>
+                                <button type="submit" class="flex w-full items-center py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 text-green-500 dark:hover:text-green-400 rounded-2xl">
+                                    <a href="{{ route('pembayaran.showFormBayar', $item->id) }}">Bayar</a>
+                                </button>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="10" class="text-center">Tidak ada data pemakaian yang belum lunas.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -68,61 +69,3 @@
         </div>
     </div>
 </section>
-
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const input = document.getElementById("NoKontrol");
-    const dropdown = document.getElementById("dropdown-results");
-
-    input.addEventListener("input", function () {
-        const query = this.value;
-
-        if (query.length < 2) {
-            dropdown.classList.add("hidden");
-            dropdown.innerHTML = '';
-            return;
-        }
-
-        fetch(`/search-nokontrol?q=${query}`)
-            .then(response => response.json())
-            .then(data => {
-                dropdown.innerHTML = '';
-                if (data.length === 0) {
-                    dropdown.classList.add("hidden");
-                    return;
-                }
-
-                data.forEach(item => {
-                    const li = document.createElement('li');
-                    li.textContent = `${item.NoKontrol} - ${item.NamaPelanggan}`;
-                    li.className = "px-4 py-2 hover:bg-blue-100 cursor-pointer dark:hover:bg-blue-700 dark:text-white";
-
-                    li.addEventListener("click", function () {
-                        input.value = item.NoKontrol;
-                        dropdown.classList.add("hidden");
-                        dropdown.innerHTML = '';
-
-                        // Populate additional fields if needed
-                        document.getElementById("nama_pelanggan").value = item.NamaPelanggan;
-                        document.getElementById("alamat_pelanggan").value = item.Alamat;
-                    });
-
-                    dropdown.appendChild(li);
-                });
-
-                dropdown.classList.remove("hidden");
-            })
-            .catch(error => {
-                console.error('Error fetching data:', error);
-                dropdown.classList.add("hidden");
-                dropdown.innerHTML = '';
-            });
-    });
-
-    document.addEventListener("click", function (e) {
-        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.add("hidden");
-        }
-    });
-});
-</script>

@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\Pelanggan;
 use App\Models\Pemakaian;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PemakaianController extends Controller
 {
@@ -111,23 +112,27 @@ class PemakaianController extends Controller
     }
     public function getPelangganInfo($NoKontrol)
     {
-        $pelanggan = Pelanggan::with('tarif')->find($NoKontrol);
-    
+        $pelanggan = DB::table('pelanggan')
+            ->leftJoin('tarif', 'pelanggan.JenisPelanggan', '=', 'tarif.JenisPelanggan')
+            ->where('pelanggan.NoKontrol', $NoKontrol)
+            ->select('pelanggan.Nama', 'pelanggan.JenisPelanggan', 'tarif.TarifKWH', 'tarif.BiayaBeban')
+            ->first();
+
         if (!$pelanggan) {
             return response()->json(['error' => 'Pelanggan tidak ditemukan'], 404);
         }
-    
-        // Ambil meter akhir dari bulan sebelumnya (jika ada)
-        $lastUsage = Pemakaian::where('NoKontrol', $NoKontrol)
+
+        $lastUsage = DB::table('pemakaian')
+            ->where('NoKontrol', $NoKontrol)
             ->orderByDesc('Tahun')
             ->orderByDesc('Bulan')
             ->first();
-    
+
         return response()->json([
             'nama' => $pelanggan->Nama,
-            'biaya_beban' => $pelanggan->tarif->BiayaBeban ?? 0,
+            'biaya_beban' => $pelanggan->BiayaBeban ?? 0,
+            'tarifKwh' => $pelanggan->TarifKWH ?? 0,
             'meter_akhir_sebelumnya' => $lastUsage->MeterAkhir ?? 0
         ]);
     }
-    
 }
