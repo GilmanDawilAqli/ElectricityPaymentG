@@ -9,24 +9,24 @@ class AuthController extends Controller
 {
     public function showLogin()
     {
-        return view('/login'); // pastikan view ini ada
+        return view('login'); // pastikan view ini ada
     }
 
     public function login(Request $request)
     {
-        $credentials = $request->only('email', 'password', 'nama');
+        $credentials = $request->validate([
+            'email'    => 'required|email',
+            'password' => 'required|string',
+        ]);
     
-        $user = \App\Models\User::where('email', $credentials['email'])
-                    ->where('name', $credentials['nama']) // cek juga nama
-                    ->first();
-    
-        if ($user && $user->password === $credentials['password']) {
-            Auth::login($user);
+        // cukup pakai attempt
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();   // proteksi session fixation
             return redirect()->intended('/home');
         }
     
         return back()->withErrors([
-            'email' => 'Email, nama, atau password salah.',
+            'email' => 'Email atau password salah.',
         ]);
     }
 

@@ -9,7 +9,7 @@ class TarifController extends Controller
 {
     public function index()
     {
-        $tarif = tarif::all();
+        $tarif = tarif::paginate(10);
         return view('tarif', compact('tarif'));
     }
 

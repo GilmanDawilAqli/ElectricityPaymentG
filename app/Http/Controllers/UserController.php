@@ -9,7 +9,7 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::all(); // Ambil semua data user
+        $users = User::paginate(10); 
         return view('petugas', compact('users'));
     }
 
@@ -25,7 +25,7 @@ class UserController extends Controller
         User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => bcrypt($request->password), // Enkripsi password
+            'password' => $request->password,
             'admin' => $request->admin, // Simpan admin
         ]);
 

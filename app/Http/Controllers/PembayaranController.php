@@ -14,9 +14,15 @@ class PembayaranController extends Controller
      */
     public function index()
     {
-        $pemakaian = Pemakaian::where('status', 'Belum Lunas')->with('pelanggan')->get();
+        // Ambil hanya yang “Belum Lunas” lalu paginate 10 data per halaman
+        $pemakaian = Pemakaian::where('status', 'Belum Lunas')
+                     ->with('pelanggan')
+                     ->orderByDesc('created_at')   // opsional: urutkan terbaru dulu
+                     ->paginate(10);               // ganti 10 sesuai kebutuhan
+    
         return view('pembayaran', compact('pemakaian'));
     }
+    
 
     /**
      * Show the form for creating a new resource.

@@ -12,9 +12,10 @@ class PemakaianController extends Controller
 {
     public function index()
     {
-        $pemakaian = Pemakaian::with('pelanggan')->get(); // Pastikan relasi pelanggan dimuat
+        $pemakaian = Pemakaian::with('pelanggan')->paginate(10); // 10 data per halaman
         return view('pemakaian', compact('pemakaian'));
     }
+    
 
     public function create()
     {

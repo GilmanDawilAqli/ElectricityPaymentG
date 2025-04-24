@@ -17,11 +17,6 @@
                 @endif
                 <form method="POST" action="/login" class="space-y-4 md:space-y-6">
                     @csrf
-                    {{-- Nama --}}
-                    <div>
-                        <label for="nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Petugas</label>
-                        <input type="text" name="nama" id="nama" required class="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Nama Petugas" required="">
-                    </div>
                     {{-- Email --}}
                     <div>
                         <label for="email" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Email</label>

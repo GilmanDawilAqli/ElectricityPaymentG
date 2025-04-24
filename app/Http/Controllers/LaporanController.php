@@ -35,7 +35,7 @@ class LaporanController extends Controller
             $query->where('NoKontrol', 'like', "%$nokontrol%");
         }
 
-        $pemakaian = $query->get();
+        $pemakaian = $query->paginate(10)->appends($request->all());
 
         return view('laporan', compact('pemakaian'));
     }
