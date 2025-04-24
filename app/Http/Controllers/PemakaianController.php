@@ -102,6 +102,7 @@ class PemakaianController extends Controller
 
         return response()->json($results);
     }
+    // Search Pelanggan dengan NoKontrol
     public function getPelanggan(Request $request)
     {
         $data = Pelanggan::where('NoKontrol', 'LIKE', '%' . $request->term . '%')

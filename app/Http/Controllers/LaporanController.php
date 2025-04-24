@@ -83,10 +83,10 @@ class LaporanController extends Controller
 
     public function generateSatu($id)
     {
-        $data = Pemakaian::with('pelanggan')->findOrFail($id);
-
+        $data = Pemakaian::with(['pelanggan', 'pembayaran'])->findOrFail($id);
+    
         $pdf = Pdf::loadView('laporan.laporan_satu', compact('data'));
-
+    
         return $pdf->download("Laporan-{$data->NoKontrol}-{$data->Bulan}-{$data->Tahun}.pdf");
-    }
+    }    
 }

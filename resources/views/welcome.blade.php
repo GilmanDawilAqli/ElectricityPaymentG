@@ -10,6 +10,7 @@
         <link rel="icon" href="{{ asset('electricity.svg') }}" type="image/svg+xml">
     </head>
     <body class="bg-[#FDFDFC] dark:bg-[#0a0a0a] text-[#1b1b18] flex p-6 lg:p-8 items-center lg:justify-center min-h-screen flex-col">
+        {{-- Login Button --}}
         <header class="w-full lg:max-w-4xl max-w-[335px] text-sm mb-6">
             <ul class="flex gap-3 text-sm leading-normal">
                 <li>
@@ -19,12 +20,14 @@
                 </li>
             </ul>
         </header>
+        {{-- Content --}}
         <div class="flex items-center justify-center w-full transition-opacity opacity-100 duration-750 lg:grow not-visited:starting:opacity-0">
             <main class="flex max-w-[335px] w-full flex-col-reverse lg:max-w-4xl lg:flex-row">
                 <div class="text-[13px] leading-[20px] flex-1 p-6 pb-12 lg:p-20 bg-white dark:bg-[#161615] dark:text-[#EDEDEC] shadow-[inset_0px_0px_0px_1px_rgba(26,26,0,0.16)] dark:shadow-[inset_0px_0px_0px_1px_#fffaed2d] rounded-bl-lg rounded-br-lg lg:rounded-tl-lg lg:rounded-br-none">
                     <h1 class="mb-1 font-bold text-lg">Selamat datang di website pembayaran listrik kami!!!</h1>
                     <p class="mb-4 text-[#706f6c] dark:text-[#A1A09A]">Silahkan masukkan nomor kontrol untuk melihat pemakaian listrik, jika tidak ada berarti anda belum terdaftar</p>
 
+                    {{-- Search --}}
                     <form action="{{ route('search.pemakaian') }}" method="GET" class="max-w-md mx-auto">   
                         <label for="search" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
                         <div class="relative">
@@ -44,6 +47,7 @@
 
     </body>
 
+    {{-- Hasil --}}
     @if(isset($message))
         <p class="text-center text-red-500 mt-4">{{ $message }}</p>
     @endif
@@ -53,7 +57,7 @@
             <h2 class="text-lg font-semibold text-gray-900 dark:text-gray-300">Pemakaian untuk : {{ $pelanggan->Nama }}</h2>
         </div>
     @endif
-
+    {{-- Tabel Hasil search --}}
     @if(isset($pemakaian) && $pemakaian->count())
         <div class="overflow-x-auto mt-4">
             <table class="min-w-full text-sm text-left">

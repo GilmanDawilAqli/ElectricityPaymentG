@@ -1,5 +1,6 @@
-<x-layout></x-layout>
+{{-- Create Pemakaian --}}
 
+<x-layout></x-layout>
 
 <section class="bg-white py-8 antialiased dark:bg-gray-900 h-screen md:py-16 flex justify-center mb-4">
     <div class="p-4 bg-white rounded-lg shadow border border-gray-600 dark:bg-gray-800 sm:p-5 max-w-3xl h-fit w-full">
@@ -138,6 +139,7 @@
                         type="number" required readonly
                     >
                 </div>
+                {{-- Nilai TarifKWH yang diambil dari tabel Tarif, hanya untuk menghitung --}}
                 <input type="hidden" id="nilaiPerVA">
 
                 {{-- Jumlah Pakai --}}

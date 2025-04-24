@@ -1,11 +1,15 @@
+{{-- Halaman Laporan --}}
+
 <x-layout></x-layout>
 
 <section class="bg-gray-50 dark:bg-gray-900 p-3 h-screen sm:p-5">
     <div class="mx-auto max-w-screen-xl px-4 lg:px-12">
 
         <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
+            {{-- Filter & Generate PDF --}}
             <form method="GET" action="{{ route('laporan.index') }}" class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
                 <div class="w-full md:w-1/2">
+                    {{-- Search NoKontrol Filter --}}
                     <div class="flex items-center relative w-full">
                         <label for="NoKontrol" class="sr-only">Search</label>
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
@@ -26,12 +30,13 @@
                 </div>
             
                 <div class="flex flex-col items-stretch justify-end flex-shrink-0 w-full space-y-2 md:w-auto md:flex-row md:space-y-0 md:items-center md:space-x-3">
+                    {{-- Filter Status Lunas/BelumLunas --}}
                     <select name="status" class="items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                         <option value=""> Status </option>
                         <option value="Lunas" {{ request('status') == 'Lunas' ? 'selected' : '' }}>Lunas</option>
                         <option value="Belum Lunas" {{ request('status') == 'Belum Lunas' ? 'selected' : '' }}>Belum Lunas</option>
                     </select>
-            
+                    {{-- Filter Bulan --}}
                     <select name="bulan" class="items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                         <option value="">Bulan</option>
                         @foreach([
@@ -42,18 +47,18 @@
                             <option value="{{ $num }}" {{ request('bulan') == $num ? 'selected' : '' }}>{{ $bln }}</option>
                         @endforeach
                     </select>
-            
+                    {{-- Filter Tahun --}}
                     <select name="tahun" class="items-center justify-center w-full px-4 py-2 text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg md:w-auto focus:outline-none hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:ring-4 focus:ring-gray-200 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                         <option value="">Tahun</option>
                         @for($y = 2015; $y <= date('Y'); $y++)
                             <option value="{{ $y }}" {{ request('tahun') == $y ? 'selected' : '' }}>{{ $y }}</option>
                         @endfor
                     </select>
-            
+                    {{-- Button Filter --}}
                     <button type="submit" class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none border dark:border-gray-600 dark:focus:ring-blue-800">
                         Filter
                     </button>
-
+                    {{-- Button Download/Generate PDF --}}
                     <a href="{{ route('laporan.generate', request()->only(['status', 'tahun', 'bulan', 'nokontrol'])) }}"
                         class="flex items-center justify-center text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none border dark:border-gray-600 dark:focus:ring-blue-800">
                          Download PDF
@@ -61,7 +66,7 @@
                 </div>
             </form>
 
-
+            {{-- Tabel data laporan --}}
             <div class="overflow-x-auto">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400 text-center">

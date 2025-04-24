@@ -1,3 +1,5 @@
+{{-- Form Create dan Update Pelanggan --}}
+
 <x-layout></x-layout>
 
 <section class="bg-white py-8 antialiased dark:bg-gray-900 h-screen md:py-16 flex justify-center">
@@ -32,15 +34,33 @@
                 </div>
                 {{-- Nama --}}
                 <div class="mb-3">
-                    <label for="Nama" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama</label>
-                    <input type="text" name="Nama" id="Nama" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                        value="{{ $pelanggan->Nama ?? old('Nama') }}" required>
+                    <label 
+                        for="Nama" 
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Nama
+                    </label>
+                    <input 
+                        type="text" 
+                        name="Nama" 
+                        id="Nama" required
+                        value="{{ $pelanggan->Nama ?? old('Nama') }}" 
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                    >
                 </div>
                 {{-- Alamat --}}
                 <div class="mb-3">
-                    <label for="Alamat" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Alamat</label>
-                    <input type="text" name="Alamat" id="Alamat" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
-                        value="{{ $pelanggan->Alamat ?? old('Alamat') }}" required>
+                    <label 
+                        for="Alamat" 
+                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                        >Alamat
+                    </label>
+                    <input 
+                        type="text" 
+                        name="Alamat" 
+                        id="Alamat"  required
+                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-600 focus:border-blue-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" 
+                        value="{{ $pelanggan->Alamat ?? old('Alamat') }}"
+                    >
                 </div>
                 {{-- No Telepon --}}
                 <div class="mb-3">
